@@ -27,6 +27,8 @@ data:
       required: false
       default: "vim"
       description: "Space-separated apt packages to install in the Kali image"
+    - name: icon
+      default: "https://raw.githubusercontent.com/aldmbmtl/Terra-Cyber/refs/heads/main/plugins/kali/assets/logo.png"
   # Generic shell-session variables useful to anything run in the Kali terminal
   # (wetty/tmux shell — not an application with its own env).
   env_hints: |
