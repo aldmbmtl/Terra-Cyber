@@ -1,6 +1,6 @@
 resource_id: kali
 name: Kali
-icon: https://raw.githubusercontent.com/juno-fx/Terra-Official-Plugins/refs/heads/main/plugins/kali/scripts/assets/logo.png
+icon: https://raw.githubusercontent.com/juno-fx/Terra-Official-Plugins/refs/heads/main/plugins/kali/assets/logo.png
 description: Kali Linux workload with integrated wetty terminal and tmux session persistence.
 category: Development
 tags:
