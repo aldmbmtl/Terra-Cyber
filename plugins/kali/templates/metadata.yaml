@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-terra-metadata
+  labels:
+    kuiper.juno-innovations.com/chart: "{{ .Release.Name }}-scripts-configmap"
+  annotations:
+    juno-innovations.com/workload: "Terminal"
+data:
+  chart: "{{ .Release.Name }}-scripts-configmap"
+  description: "Kali Linux workload with integrated wetty terminal and tmux session persistence."
+  fields: |
+    - name: registry
+      type: string
+      required: true
+      default: "kalilinux"
+    - name: repo
+      type: string
+      required: true
+      default: "kali"
+    - name: tag
+      type: string
+      required: true
+      default: "latest"
+    - name: host
+      type: string
+      required: true
+      description: "Ingress host (e.g. example.com)"
+    - name: packages
+      type: string
+      required: false
+      default: "vim"
+      description: "Space-separated apt packages to install in the Kali image"

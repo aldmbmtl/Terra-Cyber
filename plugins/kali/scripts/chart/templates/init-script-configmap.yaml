@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}-init-script
+  labels:
+    kuiper.juno-innovations.com/chart: "{{ .Release.Name }}-scripts-configmap"
+data:
+  start.sh: |
+    #!/bin/sh
+    set -e
+
+    log() { echo "[init] $*"; }
+
+    # User/group remap (Debian syntax — image is Kali/Debian, not Alpine)
+    PUID="${PUID:-0}"
+    PGID="${PGID:-0}"
+    USER_NAME="${USER:-kali}"
+    HOME_DIR="/home/${USER_NAME}"
+    SUDO_ACTIVE="false"
+
+    if [ "${PUID}" != "0" ]; then
+      log "Remapping user to PUID=${PUID} PGID=${PGID}"
+      getent group "${PGID}" > /dev/null 2>&1 || groupadd -g "${PGID}" kali
+      id "${USER_NAME}" > /dev/null 2>&1 || useradd -m -d "${HOME_DIR}" -u "${PUID}" -g "${PGID}" -s /bin/bash "${USER_NAME}"
+      usermod -u "${PUID}" "${USER_NAME}" 2>/dev/null || true
+      mkdir -p "${HOME_DIR}"
+      chown -R "${PUID}:${PGID}" "${HOME_DIR}"
+    fi
+
+    # Install runtime deps + requested packages (Kali/apt)
+    MISSING=""
+    command -v tmux    > /dev/null 2>&1 || MISSING="$MISSING tmux"
+    command -v node    > /dev/null 2>&1 || MISSING="$MISSING nodejs"
+    command -v npm     > /dev/null 2>&1 || MISSING="$MISSING npm"
+    command -v sudo    > /dev/null 2>&1 || MISSING="$MISSING sudo"
+    if [ -n "${MISSING}" ] || [ -n "${PACKAGES:-}" ]; then
+      log "Installing:${MISSING}${PACKAGES:+ ${PACKAGES}}"
+      apt-get update -qq
+      [ -n "$MISSING" ] && apt-get install -y $MISSING 2>&1
+      [ -n "${PACKAGES:-}" ] && apt-get install -y ${PACKAGES} 2>&1
+    fi
+
+    # Grant passwordless sudo to the remapped user when SUDO env is set.
+    # Runs after dep install so the sudo group/sudoers.d exist.
+    if [ "${PUID}" != "0" ] && [ -n "${SUDO+x}" ]; then
+      SUDO_ACTIVE="true"
+      log "SUDO detected — granting passwordless sudo to ${USER_NAME}"
+      usermod -aG sudo "${USER_NAME}"
+      echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/${USER_NAME}"
+      chmod 440 "/etc/sudoers.d/${USER_NAME}"
+    fi
+
+    # Install wetty
+    if ! command -v wetty > /dev/null 2>&1; then
+      log "Installing wetty..."
+      npm install -g wetty 2>&1
+    else
+      log "wetty already installed, skipping..."
+    fi
+
+    chmod +x /usr/local/lib/node_modules/wetty/build/main.js 2>/dev/null || true
+
+    # .tmux.conf — truecolor, mouse, scrollback
+    mkdir -p "${HOME_DIR}"
+    cat > "${HOME_DIR}/.tmux.conf" << 'TMUXCONF'
+    set -g default-terminal "tmux-256color"
+    set -ga terminal-overrides ",*:Tc"
+    set -g mouse on
+    set -g history-limit 50000
+    TMUXCONF
+    chown -R "${PUID}:${PGID}" "${HOME_DIR}" 2>/dev/null || true
+
+    # Graceful shutdown on termination (matches /opt/init/shutdown.sh)
+    cleanup() {
+      log "Received termination signal — shutting down..."
+      /opt/init/shutdown.sh || true
+      kill "${WETTY_PID:-}" 2>/dev/null || true
+      wait
+      exit 0
+    }
+    trap cleanup TERM INT
+
+    NAMESPACE="${NAMESPACE:-default}"
+    NAME="${NAME:-kali}"
+    SESSION_NAME="juno-kali-${NAME}"
+    TTYD_PORT="${TTYD_PORT:-3000}"
+
+    # Start wetty with tmux session persistence.
+    # -b sets base path (must match ingress/nginx path).
+    # Run the shell as the remapped user with sudo when SUDO env is set
+    # (and a real user exists), otherwise keep the current (root) shell.
+    if [ "${SUDO_ACTIVE}" = "true" ]; then
+      WETTY_CMD="sudo -E -u ${USER_NAME} bash -c 'export HOME=${HOME_DIR} USER=${USER_NAME} && exec tmux new-session -A -s ${SESSION_NAME} bash'"
+    else
+      WETTY_CMD="tmux new-session -A -s ${SESSION_NAME} bash"
+    fi
+
+    log "Starting wetty on port ${TTYD_PORT}, session ${SESSION_NAME}"
+    wetty -b "/${NAMESPACE}/kali/${NAME}" --allow-iframe -p "${TTYD_PORT}" \
+      -c "${WETTY_CMD}" \
+      2>&1 | sed 's/^/[wetty] /' &
+    WETTY_PID=$!
+
+    wait
+
+  shutdown.sh: |
+    #!/bin/sh
+    set -e
+    log() { echo "[shutdown] $*"; }
+    log "Stopping wetty gracefully..."
+    pkill -f wetty 2>/dev/null || true
+    log "Graceful shutdown complete."

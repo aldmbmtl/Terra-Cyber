@@ -1,0 +1,2 @@
+# Outer chart values - minimal; workload params live in scripts/chart/values.yaml
+name: kali

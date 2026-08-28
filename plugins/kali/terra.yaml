@@ -1,0 +1,30 @@
+resource_id: kali
+name: Kali
+icon: https://raw.githubusercontent.com/juno-fx/Terra-Official-Plugins/refs/heads/main/plugins/kali/scripts/assets/logo.png
+description: Kali Linux workload with integrated wetty terminal and tmux session persistence.
+category: Development
+tags:
+  - cluster-level
+  - development
+  - workload
+  - terminal
+fields:
+  - name: registry
+    type: string
+    required: true
+    default: "kalilinux"
+  - name: repo
+    type: string
+    required: true
+    default: "kali"
+  - name: tag
+    type: string
+    required: true
+    default: "latest"
+  - name: host
+    type: string
+    required: true
+  - name: packages
+    type: string
+    required: false
+    default: "vim"

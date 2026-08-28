@@ -1,0 +1,9 @@
+# Boilerplate for cluster-level plugins
+
+This directory contains scaffolding for cluster-level plugins.
+Cluster-level plugins are installed into the `argocd` namespace
+instead of the user's project namespace. The plugin is expected
+to create and manage its own namespaces if needed.
+
+Run `make new-plugin` to generate a new cluster-level plugin with
+the correct boilerplate.

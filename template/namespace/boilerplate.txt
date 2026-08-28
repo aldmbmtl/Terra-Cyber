@@ -1,0 +1,8 @@
+# Boilerplate for namespaced plugins
+
+This directory contains scaffolding for namespaced plugins.
+Namespaced plugins are installed into the user's project namespace
+and can contain any valid Kubernetes objects.
+
+Run `make new-plugin` to generate a new namespaced plugin with
+the correct boilerplate.

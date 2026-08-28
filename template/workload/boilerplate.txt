@@ -1,0 +1,11 @@
+# Boilerplate for workload template plugins
+
+This directory contains scaffolding for workload template plugins.
+Workload templates are consumed by Genesis and Kuiper. They do not
+deploy a running workload at install time. Instead, they install a
+ConfigMap containing an embedded Helm chart (`scripts/chart/`).
+Kuiper renders this embedded chart at workload launch time using
+the field values defined in `templates/metadata.yaml`.
+
+Run `make new-plugin` to generate a new workload template plugin with
+the correct boilerplate.

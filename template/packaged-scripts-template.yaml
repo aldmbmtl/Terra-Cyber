@@ -1,0 +1,12 @@
+# Base template for packaged-scripts.yaml
+# This file is used by `make package` to generate the ConfigMap YAML
+# containing the base64-encoded scripts/ directory.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-scripts-configmap
+  labels:
+    kuiper.juno-innovations.com/chart: "{{ .Release.Name }}-scripts-configmap"
+data:
+  packaged_scripts: "{{ .Values.packaged_scripts_base64 }}"

@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{ .Values.name }}"
+  labels:
+    kuiper.juno-innovations.com/kuiper-instance: "{{ .Values.name }}"
+    juno-innovations.com/workload: "Terminal"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      kuiper.juno-innovations.com/kuiper-instance: "{{ .Values.name }}"
+  template:
+    metadata:
+      labels:
+        kuiper.juno-innovations.com/kuiper-instance: "{{ .Values.name }}"
+        juno-innovations.com/workload: "Terminal"
+    spec:
+      {{- if .Values.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecret }}
+      {{- end }}
+      nodeSelector:
+        juno-innovations.com/workstation: "true"
+      tolerations:
+        - key: juno-innovations.com/workstation
+          operator: Exists
+          effect: NoSchedule
+      hostname: "{{ .Values.name }}"
+      containers:
+        - name: nginx
+          image: "docker.io/nginx:1.29.3"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3001
+              name: nginx
+          volumeMounts:
+            - name: nginx
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+        - name: wetty
+          image: "{{ .Values.registry }}/{{ .Values.repo }}:{{ .Values.tag }}"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+          args:
+            - /opt/init/start.sh
+          ports:
+            - containerPort: 3000
+              name: viewer
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "/opt/init/shutdown.sh"]
+          env:
+            - name: JUNO_PROJECT
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: JUNO_WORKSPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: JUNO_ENVIRONMENT
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: USER
+              value: "{{ .Values.user }}"
+            - name: HOME
+              value: "/home/{{ .Values.user }}"
+            - name: PUID
+              value: "{{ .Values.puid }}"
+            - name: PGID
+              value: "{{ .Values.guid }}"
+            - name: WORKSTATION_NAME
+              value: "{{ .Values.name }}"
+            - name: NAME
+              value: "{{ .Values.name }}"
+            - name: TTYD_PORT
+              value: "3000"
+            - name: NAMESPACE
+              value: "{{ .Release.Namespace }}"
+            {{- if .Values.packages }}
+            - name: PACKAGES
+              value: "{{ .Values.packages }}"
+            {{- end }}
+            {{- range .Values.env }}
+            - name: {{ .name | quote }}
+              value: {{ .value | quote }}
+            {{- end }}
+          resources:
+            {{- if or .Values.cpuLimit .Values.memoryLimit }}
+            limits:
+              {{- if .Values.cpuLimit }}
+              cpu: "{{ .Values.cpuLimit }}"
+              {{- end }}
+              {{- if .Values.memoryLimit }}
+              memory: "{{ .Values.memoryLimit }}"
+              {{- end }}
+            {{- end }}
+            requests:
+              cpu: "{{ .Values.cpu }}"
+              memory: "{{ .Values.memory }}"
+          volumeMounts:
+            - name: init-script
+              mountPath: /opt/init
+              readOnly: true
+            {{- if .Values.volumeMounts }}
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
+            {{- end }}
+      volumes:
+        - name: init-script
+          configMap:
+            name: "{{ .Values.name }}-init-script"
+        - name: nginx
+          configMap:
+            name: "{{ .Values.name }}-nginx"
+        {{- if .Values.volumes }}
+        {{- toYaml .Values.volumes | nindent 8 }}
+        {{- end }}
