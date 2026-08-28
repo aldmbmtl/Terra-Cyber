@@ -16,7 +16,7 @@ installed as a running service.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `registry` | string | `kalilinux` | Container image registry |
-| `repo` | string | `kali` | Image repository |
+| `repo` | string | `kali-rolling` | Image repository |
 | `tag` | string | `latest` | Image tag |
 | `packages` | string | `vim` | Space-separated apt packages to install at launch |
 
