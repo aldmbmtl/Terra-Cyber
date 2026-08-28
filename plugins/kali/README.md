@@ -18,7 +18,6 @@ installed as a running service.
 | `registry` | string | `kalilinux` | Container image registry |
 | `repo` | string | `kali` | Image repository |
 | `tag` | string | `latest` | Image tag |
-| `host` | string | (required) | Ingress host, e.g. `example.com` |
 | `packages` | string | `vim` | Space-separated apt packages to install at launch |
 
 ## How it works

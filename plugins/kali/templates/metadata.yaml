@@ -22,10 +22,6 @@ data:
       type: string
       required: true
       default: "latest"
-    - name: host
-      type: string
-      required: true
-      description: "Ingress host (e.g. example.com)"
     - name: packages
       type: string
       required: false
