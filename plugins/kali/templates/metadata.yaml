@@ -4,6 +4,8 @@ metadata:
   name: {{ .Release.Name }}-terra-metadata
   labels:
     kuiper.juno-innovations.com/chart: "{{ .Release.Name }}-scripts-configmap"
+  annotations:
+    juno-innovations.com/workload: "Terminal"
 data:
   chart: "{{ .Release.Name }}-scripts-configmap"
   description: "Kali Linux workload with integrated wetty terminal and tmux session persistence."
@@ -25,3 +27,10 @@ data:
       required: false
       default: "vim"
       description: "Space-separated apt packages to install in the Kali image"
+  # Generic shell-session variables useful to anything run in the Kali terminal
+  # (wetty/tmux shell — not an application with its own env).
+  env_hints: |
+    - name: TZ
+      description: Timezone for the shell session, e.g. "America/New_York".
+    - name: EDITOR
+      description: Default text editor invoked by CLI tools (e.g. vim, nano).
