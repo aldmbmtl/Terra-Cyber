@@ -4,8 +4,6 @@ metadata:
   name: {{ .Release.Name }}-terra-metadata
   labels:
     kuiper.juno-innovations.com/chart: "{{ .Release.Name }}-scripts-configmap"
-  annotations:
-    juno-innovations.com/workload: "Terminal"
 data:
   chart: "{{ .Release.Name }}-scripts-configmap"
   description: "Kali Linux workload with integrated wetty terminal and tmux session persistence."

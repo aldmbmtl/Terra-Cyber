@@ -2,7 +2,7 @@ resource_id: kali
 name: Kali
 icon: https://raw.githubusercontent.com/aldmbmtl/Terra-Cyber/refs/heads/main/plugins/kali/assets/logo.png
 description: Kali Linux workload with integrated wetty terminal and tmux session persistence.
-category: Development
+category: Workstations
 tags:
   - cluster-level
   - development
