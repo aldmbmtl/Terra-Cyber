@@ -52,6 +52,9 @@ data:
 
     # Install wetty
     if ! command -v wetty > /dev/null 2>&1; then
+      log "Installing native build toolchain (gc-stats/node-pty)..."
+      apt-get update -qq
+      apt-get install -y --no-install-recommends python3-setuptools build-essential 2>&1
       log "Installing wetty..."
       npm install -g wetty@2.5 2>&1
     else
