@@ -1,0 +1,10 @@
+resource_id: squid
+name: Squid Proxy
+icon: https://raw.githubusercontent.com/aldmbmtl/Terra-Cyber/refs/heads/main/plugins/squid/assets/logo.png
+description: VPN-routed Squid HTTP proxy for routing outbound traffic through a tunnel.
+category: Networking
+tags:
+  - cluster-level
+  - workload
+  - server
+fields: []

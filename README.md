@@ -11,6 +11,7 @@ This repository is a Terra plugin **Source** — add it in the Terra UI like any
 | Plugin | Type | Category | Description | Docs |
 |--------|------|----------|-------------|------|
 | [kali](plugins/kali/README.md) | Workload template | Development | Kali Linux container with wetty web terminal + tmux session persistence | [README](plugins/kali/README.md) |
+| [squid](plugins/squid/README.md) | Workload template | Networking | VPN-routed Squid HTTP proxy for routing outbound traffic through a tunnel | [README](plugins/squid/README.md) |
 
 ---
 

@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.name }}"
+  labels:
+    kuiper.juno-innovations.com/kuiper-instance: "{{ .Values.name }}"
+    juno-innovations.com/workload: "Server"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      kuiper.juno-innovations.com/kuiper-instance: "{{ .Values.name }}"
+  template:
+    metadata:
+      labels:
+        kuiper.juno-innovations.com/kuiper-instance: "{{ .Values.name }}"
+        juno-innovations.com/workload: "Server"
+    spec:
+      {{- if .Values.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecret }}
+      {{- end }}
+      automountServiceAccountToken: false
+      containers:
+        - name: vpn
+          image: "ghcr.io/qmcgaw/gluetun"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            - name: VPN_SERVICE_PROVIDER
+              value: "{{ .Values.vpnProvider }}"
+            - name: SERVER_COUNTRIES
+              value: "{{ .Values.serverCountries }}"
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              value: "{{ .Values.firewallSubnets }}"
+            - name: VPN_TYPE
+              value: "openvpn"
+            - name: DNS_KEEP_NAMESERVER
+              value: "on"
+            - name: OPENVPN_USER
+              value: "{{ .Values.openvpnUser }}"
+            - name: OPENVPN_PASSWORD
+              value: "{{ .Values.openvpnPassword }}"
+            {{- range .Values.env }}
+            - name: {{ .name | quote }}
+              value: {{ .value | quote }}
+            {{- end }}
+          resources:
+            {{- if or .Values.cpuLimit .Values.memoryLimit }}
+            limits:
+              {{- if .Values.cpuLimit }}
+              cpu: "{{ .Values.cpuLimit }}"
+              {{- end }}
+              {{- if .Values.memoryLimit }}
+              memory: "{{ .Values.memoryLimit }}"
+              {{- end }}
+            {{- end }}
+            requests:
+              cpu: "{{ .Values.cpu }}"
+              memory: "{{ .Values.memory }}"
+          volumeMounts:
+            - name: tun
+              mountPath: /dev/net/tun
+        - name: squid
+          image: "ubuntu/squid:latest"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3128
+              name: http
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 3128
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          env:
+            {{- range .Values.env }}
+            - name: {{ .name | quote }}
+              value: {{ .value | quote }}
+            {{- end }}
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "250Mi"
+      volumes:
+        - name: tun
+          hostPath:
+            path: /dev/net/tun
+        {{- if .Values.volumes }}
+        {{- toYaml .Values.volumes | nindent 8 }}
+        {{- end }}

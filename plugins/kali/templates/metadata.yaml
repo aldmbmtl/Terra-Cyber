@@ -36,3 +36,9 @@ data:
       description: Timezone for the shell session, e.g. "America/New_York".
     - name: EDITOR
       description: Default text editor invoked by CLI tools (e.g. vim, nano).
+    - name: http_proxy
+      description: Squid proxy for outbound HTTP, e.g. "http://<squid-name>-squid:3128".
+    - name: https_proxy
+      description: Squid proxy for outbound HTTPS, e.g. "http://<squid-name>-squid:3128".
+    - name: no_proxy
+      description: Comma-separated hosts to bypass the proxy, e.g. "localhost,127.0.0.1".

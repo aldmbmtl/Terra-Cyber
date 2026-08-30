@@ -1,0 +1,8 @@
+# Base template for packaged-scripts-cleanup.yaml
+# This file is used by `make package` to generate the cleanup ConfigMap YAML.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-scripts-cleanup
+data: {}

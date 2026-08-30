@@ -20,6 +20,18 @@ installed as a running service.
 | `tag` | string | `latest` | Image tag |
 | `packages` | string | `vim` | Space-separated apt packages to install at launch |
 
+### Custom Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `http_proxy` | Squid proxy for outbound HTTP, e.g. `http://<squid-name>-squid:3128` |
+| `https_proxy` | Squid proxy for outbound HTTPS, e.g. `http://<squid-name>-squid:3128` |
+| `no_proxy` | Comma-separated hosts to bypass the proxy, e.g. `localhost,127.0.0.1` |
+
+Set these via custom env at launch to route Kali terminal traffic (curl, wget, apt, git, python) through a
+Squid Proxy workload in the same namespace. `<squid-name>` is the squid workload instance name — its
+proxy port is `<squid-name>-squid:3128`.
+
 ## How it works
 
 - The workload is a StatefulSet with two containers:

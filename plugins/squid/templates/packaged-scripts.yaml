@@ -1,0 +1,33 @@
+# Base template for packaged-scripts.yaml
+# This file is used by `make package` to generate the ConfigMap YAML
+# containing the base64-encoded scripts/ directory.
+#
+# The generated ConfigMap is read by Genesis (Kuiper). The key shape here is
+# REQUIRED: Genesis looks up `packaged_scripts.base64` (base64-gzipped tar of
+# scripts/, root = `scripts/chart/` for workload templates) and `bootstrap.sh`.
+# Any other key layout (e.g. a single `packaged_scripts` key) makes Genesis
+# skip the workload schema entirely. Mirror the official plugin generator.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-scripts-configmap
+  labels:
+    kuiper.juno-innovations.com/chart: "{{ .Release.Name }}-scripts-configmap"
+data:
+  bootstrap.sh: |
+    #!/bin/bash
+    echo "Unpacking scripts..."
+    # decode base64 encoded scripts mount at /terra/scripts.base64
+    base64 -d /terra/scripts.base64 > /terra/scripts.tar.gz
+
+    # extract scripts to /terra/scripts
+    tar -xzvf /terra/scripts.tar.gz -C /terra/
+
+    # make scripts executable
+    chmod +x -v /terra/scripts/*.sh
+
+    # start entrypoint.sh
+    cd /terra/scripts
+    ./entrypoint.sh
+  packaged_scripts.base64: "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"

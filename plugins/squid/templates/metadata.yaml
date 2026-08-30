@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-terra-metadata
+  labels:
+    kuiper.juno-innovations.com/chart: "{{ .Release.Name }}-scripts-configmap"
+  annotations:
+    juno-innovations.com/workload: "Server"
+data:
+  chart: "{{ .Release.Name }}-scripts-configmap"
+  description: "VPN-routed Squid HTTP proxy. Forwards HTTP/HTTPS traffic from other workloads through a VPN tunnel, tunneled via gluetun."
+  fields: |
+    - name: vpnProvider
+      type: select
+      required: true
+      description: "VPN provider (e.g. nordvpn, mullvad, protonvpn, windscribe)"
+    - name: serverCountries
+      type: string
+      required: true
+      description: "Comma-separated country codes to connect through (e.g. Canada, United States)"
+    - name: firewallSubnets
+      type: string
+      required: false
+      default: "0.0.0.0/0"
+      description: "Outbound subnets allowed through the VPN. Default routes all traffic through the tunnel."
+    - name: openvpnUser
+      type: string
+      required: true
+      description: "OpenVPN service username"
+    - name: openvpnPassword
+      type: string
+      required: true
+      description: "OpenVPN service password"
+  env_hints: |
+    - name: TZ
+      description: Timezone for the proxy containers, e.g. "America/New_York".
