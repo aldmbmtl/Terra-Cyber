@@ -10,6 +10,8 @@ data:
   chart: "{{ .Release.Name }}-scripts-configmap"
   description: "VPN-routed Squid HTTP proxy. Forwards HTTP/HTTPS traffic from other workloads through a VPN tunnel, tunneled via gluetun."
   fields: |
+    - name: icon
+      default: "https://raw.githubusercontent.com/aldmbmtl/Terra-Cyber/refs/heads/main/plugins/squid/assets/logo.png"
     - name: vpnProvider
       type: select
       required: true
