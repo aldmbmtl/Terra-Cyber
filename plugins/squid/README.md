@@ -16,7 +16,7 @@ catalog, categorized as a `Server`. Not installed as a running service.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `vpnProvider` | select | *(required)* | VPN provider (e.g. `nordvpn`, `mullvad`, `protonvpn`, `windscribe`) |
+| `vpnProvider` | select | *(required)* | VPN provider (e.g. `nordvpn`, `protonvpn`, `windscribe`) |
 | `serverCountries` | string | *(required)* | Country(ies) to connect through (e.g. `Canada`, comma-separated for multiple) |
 | `firewallSubnets` | string | `0.0.0.0/0` | Outbound subnets allowed through the VPN. Default routes all traffic through the tunnel |
 | `openvpnUser` | string | *(required)* | OpenVPN service username |

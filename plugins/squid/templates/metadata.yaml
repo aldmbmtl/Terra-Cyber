@@ -13,11 +13,34 @@ data:
     - name: vpnProvider
       type: select
       required: true
-      description: "VPN provider (e.g. nordvpn, mullvad, protonvpn, windscribe)"
+      description: "VPN provider"
+      options:
+        - airvpn
+        - cyberghost
+        - expressvpn
+        - fastestvpn
+        - giganews
+        - hidemyass
+        - ipvanish
+        - ivpn
+        - nordvpn
+        - perfect privacy
+        - privado
+        - private internet access
+        - privatevpn
+        - protonvpn
+        - purevpn
+        - slickvpn
+        - surfshark
+        - torguard
+        - vpnsecure
+        - vpn unlimited
+        - vyprvpn
+        - windscribe
     - name: serverCountries
       type: string
       required: true
-      description: "Comma-separated country codes to connect through (e.g. Canada, United States)"
+      description: "Comma-separated country names to connect through (e.g. Canada, United States)"
     - name: firewallSubnets
       type: string
       required: false
