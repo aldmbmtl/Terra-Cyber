@@ -23,7 +23,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: vpn
-          image: "ghcr.io/qmcgaw/gluetun"
+          image: "docker.io/qmcgaw/gluetun"
           imagePullPolicy: IfNotPresent
           securityContext:
             capabilities:
