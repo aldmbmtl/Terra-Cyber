@@ -38,8 +38,6 @@ spec:
               value: "{{ .Values.firewallSubnets }}"
             - name: VPN_TYPE
               value: "openvpn"
-            - name: DNS_KEEP_NAMESERVER
-              value: "on"
             - name: OPENVPN_USER
               value: "{{ .Values.openvpnUser }}"
             - name: OPENVPN_PASSWORD

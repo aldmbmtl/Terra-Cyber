@@ -27,6 +27,6 @@ _kuiper:
 # Squid-specific user-facing fields (launch-time, from metadata.yaml)
 vpnProvider:
 serverCountries:
-firewallSubnets: 0.0.0.0/0
+firewallSubnets: 10.42.0.0/15
 openvpnUser:
 openvpnPassword:

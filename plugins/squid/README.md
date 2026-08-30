@@ -18,7 +18,7 @@ catalog, categorized as a `Server`. Not installed as a running service.
 |-------|------|---------|-------------|
 | `vpnProvider` | select | *(required)* | VPN provider (e.g. `nordvpn`, `protonvpn`, `windscribe`) |
 | `serverCountries` | string | *(required)* | Country(ies) to connect through (e.g. `Canada`, comma-separated for multiple) |
-| `firewallSubnets` | string | `0.0.0.0/0` | Outbound subnets allowed through the VPN. Default routes all traffic through the tunnel |
+| `firewallSubnets` | string | `10.42.0.0/15` | Subnets that bypass the VPN (route via LAN), e.g. the cluster Pod CIDR. Unmatched traffic goes through the tunnel |
 | `openvpnUser` | string | *(required)* | OpenVPN service username |
 | `openvpnPassword` | string | *(required)* | OpenVPN service password |
 
@@ -28,7 +28,7 @@ catalog, categorized as a `Server`. Not installed as a running service.
   - **gluetun** — the VPN client. Requires the `NET_ADMIN` capability and a `/dev/net/tun` hostPath
     volume. The launch-time fields wire into its environment: `VPN_SERVICE_PROVIDER`,
     `SERVER_COUNTRIES`, `FIREWALL_OUTBOUND_SUBNETS`, `OPENVPN_USER`, `OPENVPN_PASSWORD`
-    (`VPN_TYPE=openvpn` and `DNS_KEEP_NAMESERVER=on` are fixed).
+    (`VPN_TYPE=openvpn` is fixed).
   - **squid** — the HTTP forward proxy listening on port `3128`, with a readiness probe.
 - Runs on workstation nodes (`juno-innovations.com/workstation: "true"`), which must expose
   `/dev/net/tun`.

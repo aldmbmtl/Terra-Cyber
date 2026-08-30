@@ -46,8 +46,8 @@ data:
     - name: firewallSubnets
       type: string
       required: false
-      default: "0.0.0.0/0"
-      description: "Outbound subnets allowed through the VPN. Default routes all traffic through the tunnel."
+      default: "10.42.0.0/15"
+      description: "Comma-separated subnets to bypass the VPN (route via LAN), e.g. the cluster Pod CIDR 10.42.0.0/15. Unmatched traffic goes through the tunnel."
     - name: openvpnUser
       type: string
       required: true
