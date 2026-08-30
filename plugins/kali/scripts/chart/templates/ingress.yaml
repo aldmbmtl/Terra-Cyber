@@ -13,7 +13,7 @@ spec:
     - host: {{ .Values.host }}
       http:
         paths:
-          - path: "/{{ .Release.Namespace }}/kali/{{ .Values.name }}/"
+          - path: "/{{ .Release.Namespace }}/kali/{{ .Values.name }}"
             pathType: Prefix
             backend:
               service:

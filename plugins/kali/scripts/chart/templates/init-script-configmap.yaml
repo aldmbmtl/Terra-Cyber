@@ -99,7 +99,7 @@ data:
     fi
 
     log "Starting wetty on port ${TTYD_PORT}, session ${SESSION_NAME}"
-    wetty -b "/${NAMESPACE}/kali/${NAME}/" --allow-iframe -p "${TTYD_PORT}" \
+    wetty -b "/${NAMESPACE}/kali/${NAME}" --allow-iframe -p "${TTYD_PORT}" \
       -c "${WETTY_CMD}" \
       2>&1 | sed 's/^/[wetty] /' &
     WETTY_PID=$!
