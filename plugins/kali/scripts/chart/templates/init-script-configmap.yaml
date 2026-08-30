@@ -53,7 +53,7 @@ data:
     # Install wetty
     if ! command -v wetty > /dev/null 2>&1; then
       log "Installing wetty..."
-      npm install -g wetty 2>&1
+      npm install -g wetty@2.5 2>&1
     else
       log "wetty already installed, skipping..."
     fi

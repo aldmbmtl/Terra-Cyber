@@ -48,6 +48,13 @@ spec:
           ports:
             - containerPort: 3000
               name: viewer
+          readinessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
           lifecycle:
             preStop:
               exec:
